@@ -13,7 +13,7 @@
 
         <q-item-section>
           <q-item-label :class="{ 'text-strikethrough': task.completed }">
-            {{ task.name }}
+            {{ task.title }}
           </q-item-label>
         </q-item-section>
 
@@ -23,12 +23,12 @@
               <q-icon name="event" size="18px" class="q-mr-xs" />
             </div>
             <div class="column">
-              <q-item-label class="row justify-end" caption>
+              <!-- <q-item-label class="row justify-end" caption>
                 {{ task.dueDate }}
               </q-item-label>
               <q-item-label class="row justify-end" caption>
                 <small>{{ task.dueTime }}</small>
-              </q-item-label>
+              </q-item-label> -->
             </div>
           </div>
         </q-item-section>
@@ -38,33 +38,42 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
-      tasks: [
-        {
-          id: 1,
-          name: "Go to shop",
-          completed: false,
-          dueDate: "2019/05/12",
-          dueTime: "18:30",
-        },
-        {
-          id: 2,
-          name: "Get bananas",
-          completed: false,
-          dueDate: "2019/05/13",
-          dueTime: "14:00",
-        },
-        {
-          id: 3,
-          name: "Get apples",
-          completed: false,
-          dueDate: "2019/05/14",
-          dueTime: "16:00",
-        },
-      ],
+      tasks: null,
+      loading: true,
+      errored: false,
     };
+  },
+  mounted() {
+    const url = "https://jsonplaceholder.typicode.com";
+    axios
+      .get(url + "/todos")
+      .then((response) => {
+        console.log(response.data);
+        this.tasks = response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+        this.errored = true;
+      })
+      .finally(() => (this.loading = false));
+
+    axios
+      .post(url + "/todos", {
+        userId: 10,
+        userId: 10,
+        title: "ipsam aperiam voluptates qui",
+        completed: false,
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(err);
+      });
   },
 };
 </script>
