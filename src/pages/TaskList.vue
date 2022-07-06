@@ -32,8 +32,32 @@
             </div>
           </div>
         </q-item-section>
+        <q-item-section side>
+          <q-btn
+            @click.stop="promptToDelete(task.id)"
+            flat
+            round
+            dense
+            color="red"
+            icon="delete"
+          />
+        </q-item-section>
       </q-item>
     </q-list>
+
+    <div class="absolute-bottom text-center q-mb-lg">
+      <q-btn
+        @click="showAddTask = true"
+        round
+        color="primary"
+        size="24px"
+        icon="add"
+      />
+    </div>
+
+    <q-dialog v-model="showAddTask">
+      <add-task @close="showAddTask = false" />
+    </q-dialog>
   </q-page>
 </template>
 
@@ -45,7 +69,11 @@ export default {
       tasks: null,
       loading: true,
       errored: false,
+      showAddTask: false,
     };
+  },
+  components: {
+    "add-task": require("components/Tasks/Modals/AddTask.vue").default,
   },
   mounted() {
     const url = "https://jsonplaceholder.typicode.com";
@@ -74,6 +102,26 @@ export default {
       .catch((error) => {
         console.log(err);
       });
+  },
+  methods: {
+    promptToDelete(id) {
+      console.log(id);
+      const confirmed = confirm("Are you sure you want to delete this task?");
+      if (confirmed) {
+        this.deleteTask(id);
+      }
+    },
+    deleteTask(id) {
+      const url = "https://jsonplaceholder.typicode.com";
+      axios
+        .delete(url + "/todos/" + id)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
 };
 </script>
