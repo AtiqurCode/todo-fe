@@ -1,80 +1,38 @@
 <template>
-  <q-card>
-    <q-card-section class="row">
-      <div class="text-h6">Add Task</div>
-      <q-space />
-      <q-btn v-close-popup flat round dense icon="close" />
+  <q-card class="q-pa-md">
+    <q-card-section>
+      <div class="text-h6 text-center">Add new task</div>
     </q-card-section>
 
-    <form @submit.prevent="submitForm">
-      <q-card-section>
-        <div class="row q-mb-sm">
-          <q-input
-            outlined
-            v-model="taskToSubmit.title"
-            :rules="[(val) => !!val || 'Field is required']"
-            autofocus
-            ref="name"
-            label="Task name"
-            class="col"
-          >
-            <template v-slot:append>
-              <q-icon
-                v-if="taskToSubmit.title"
-                @click="taskToSubmit.title = ''"
-                name="close"
-                class="cursor-pointer"
-              />
-            </template>
-          </q-input>
-        </div>
+    <q-card-section>
+      <div class="center-portion">
+        <q-form ref="form" @submit="submitForm">
+          <div class="q-gutter-y-md column">
+            <q-input
+              label="TASK TITLE"
+              v-model="title"
+              stack-label
+              :rules="[(val) => !!val || 'field is required']"
+            />
 
-        <!-- <div class="row q-mb-sm">
-          <q-input outlined label="Due date" v-model="taskToSubmit.dueDate">
-            <template v-slot:append>
-              <q-icon
-                v-if="taskToSubmit.dueDate"
-                @click="clearDueDate"
-                name="close"
-                class="cursor-pointer"
+            <q-input
+              label="TASK DESCRIPTION"
+              v-model="description"
+              stack-label
+              :rules="[(val) => !!val || 'field is not required']"
+            />
+            <div class="row float-right q-gutter-md q-mt-md">
+              <q-btn
+                label="CANCEL"
+                v-close-popup
+                class="bg-grey-5 text-black"
               />
-              <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy>
-                  <q-date v-model="taskToSubmit.dueDate" />
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
-        </div> -->
-
-        <!-- <div v-if="taskToSubmit.dueDate" class="row q-mb-sm">
-          <q-input
-            outlined
-            label="Due time"
-            v-model="taskToSubmit.dueTime"
-            class="col"
-          >
-            <template v-slot:append>
-              <q-icon
-                v-if="taskToSubmit.dueTime"
-                @click="taskToSubmit.dueTime = ''"
-                name="close"
-                class="cursor-pointer"
-              />
-              <q-icon name="access_time" class="cursor-pointer">
-                <q-popup-proxy>
-                  <q-time v-model="taskToSubmit.dueTime" />
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
-        </div> -->
-      </q-card-section>
-
-      <q-card-actions align="right">
-        <q-btn label="Save" color="primary" type="submit" />
-      </q-card-actions>
-    </form>
+              <q-btn label="ADD" class="bg-primary text-white" type="submit" />
+            </div>
+          </div>
+        </q-form>
+      </div>
+    </q-card-section>
   </q-card>
 </template>
 
@@ -83,20 +41,21 @@ import axios from "axios";
 export default {
   data() {
     return {
-      taskToSubmit: {
-        title: "",
-        userId: 10,
-        completed: false,
-      },
+      title: "",
+      description: "",
     };
   },
   methods: {
     submitForm() {
-      // console.log(this.taskToSubmit);
+      const task = {
+        title: this.title,
+        description: this.description,
+      };
       axios
-        .post("https://jsonplaceholder.typicode.com/todos", this.taskToSubmit)
+        .post("http://127.0.0.1:8000/api/todo", task)
         .then(() => {
           this.$router.push("/");
+          console.log(task);
         })
         .catch(() => {
           this.errored = true;

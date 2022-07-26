@@ -24,7 +24,13 @@ const routes = [
         name: "Settings",
       },
     ],
+
     // children: [{ path: "", component: () => import("pages/IndexPage.vue") }],
+  },
+  {
+    path: "/meeting-invites",
+    component: () => import("pages/MeetingInvite.vue"),
+    name: "Meeting",
   },
   // {
   //   path: "/index",

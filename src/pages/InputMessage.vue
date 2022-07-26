@@ -1,39 +1,78 @@
 <template>
-  <q-page padding>
-    <div v-for="item in tasks" :key="item">
-      <div>{{ item.name }}</div>
-      <div>{{ item.dueDate }} @ {{ item.dueTime }}</div>
+  <div class="q-pa-md">
+    <!-- <q-carousel swipeable animated v-model="slide" thumbnails infinite>
+      <q-carousel-slide
+        :name="1"
+        img-src="https://cdn.quasar.dev/img/mountains.jpg"
+      />
+      <q-carousel-slide
+        :name="2"
+        img-src="https://cdn.quasar.dev/img/parallax1.jpg"
+      />
+      <q-carousel-slide
+        :name="3"
+        img-src="https://cdn.quasar.dev/img/parallax2.jpg"
+      />
+      <q-carousel-slide
+        :name="4"
+        img-src="https://cdn.quasar.dev/img/quasar.jpg"
+      />
+    </q-carousel> -->
+
+    <div class="q-gutter-md">
+      <q-carousel
+        v-model="slide1"
+        transition-prev="scale"
+        transition-next="scale"
+        swipeable
+        animated
+        control-color="white"
+        navigation
+        padding
+        arrows
+        height="300px"
+        class="bg-primary text-white shadow-1 rounded-borders"
+      >
+        <q-carousel-slide name="style" class="column no-wrap flex-center">
+          <q-icon name="style" size="56px" />
+          <div class="q-mt-md text-center">
+            {{ lorem }}
+          </div>
+        </q-carousel-slide>
+        <q-carousel-slide name="tv" class="column no-wrap flex-center">
+          <q-icon name="live_tv" size="56px" />
+          <div class="q-mt-md text-center">
+            {{ lorem }}
+          </div>
+        </q-carousel-slide>
+        <q-carousel-slide name="layers" class="column no-wrap flex-center">
+          <q-icon name="layers" size="56px" />
+          <div class="q-mt-md text-center">
+            {{ lorem }}
+          </div>
+        </q-carousel-slide>
+        <q-carousel-slide name="map" class="column no-wrap flex-center">
+          <q-icon name="terrain" size="56px" />
+          <div class="q-mt-md text-center">
+            {{ lorem }}
+          </div>
+        </q-carousel-slide>
+      </q-carousel>
     </div>
-  </q-page>
+    <!-- <button id="myButton" ref="myButton"></button> -->
+  </div>
 </template>
 
 <script>
+import { ref } from "vue";
+
 export default {
-  data() {
+  setup() {
     return {
-      tasks: [
-        {
-          name: "Go to shop",
-          dueDate: "2019/05/12",
-          dueTime: "18:30",
-        },
-        {
-          name: "Get Bananas",
-          dueDate: "2019/05/13",
-          dueTime: "18:30",
-        },
-        {
-          name: "Get apples",
-          dueDate: "2019/05/14",
-          dueTime: "18:30",
-        },
-      ],
+      slide1: ref("style"),
+      lorem:
+        "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Itaque voluptatem totam, architecto cupiditate officia rerum, error dignissimos praesentium libero ab nemo.",
     };
   },
-  // methods: {
-  //   deleteTask(index) {
-  //     this.tasks.splice(index, 1);
-  //   },
-  // },
 };
 </script>
