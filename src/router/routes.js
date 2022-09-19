@@ -5,13 +5,18 @@ const routes = [
     children: [
       {
         path: "/",
+        component: () => import("pages/DashboardPage.vue"),
+        name: "dashboard",
+      },
+      {
+        path: "/tasks",
         component: () => import("pages/TaskList.vue"),
         name: "tasks",
       },
       {
-        path: "/pintodos",
-        component: () => import("pages/InputMessage.vue"),
-        name: "Pin Tasks",
+        path: "/important",
+        component: () => import("pages/ImportantPage.vue"),
+        name: "Important",
       },
       {
         path: "/complete",
@@ -23,14 +28,30 @@ const routes = [
         component: () => import("pages/SettingsPage.vue"),
         name: "Settings",
       },
+      {
+        path: "/logout",
+        component: () => import("pages/LogoutPage.vue"),
+        name: "Logout",
+      },
     ],
 
     // children: [{ path: "", component: () => import("pages/IndexPage.vue") }],
   },
   {
-    path: "/meeting-invites",
-    component: () => import("pages/MeetingInvite.vue"),
-    name: "Meeting",
+    path: "/app",
+    component: () => import("layouts/AuthLayout.vue"),
+    children: [
+      {
+        path: "/app/signup",
+        component: () => import("pages/RegistrationPage.vue"),
+        name: "signup",
+      },
+      {
+        path: "/app/login",
+        component: () => import("pages/LoginPage.vue"),
+        name: "login",
+      },
+    ],
   },
   // {
   //   path: "/index",

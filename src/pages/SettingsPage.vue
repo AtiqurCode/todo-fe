@@ -34,6 +34,9 @@
         </q-card>
       </q-dialog>
     </div>
+    <div id="example">
+      <button v-on:click="authAvatar">Greet</button>
+    </div>
   </div>
 </template>
 
@@ -57,6 +60,10 @@ export default {
   methods: {
     submitForm() {
       console.log(this.taskToSubmit.address);
+    },
+    authAvatar() {
+      const userPrfile = JSON.parse(localStorage.getItem("auth_user_data"));
+      this.userInfo = userPrfile.user_info.profile_photo_url;
     },
   },
 };

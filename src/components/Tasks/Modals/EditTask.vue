@@ -6,7 +6,7 @@
 
     <q-card-section>
       <div class="center-portion">
-        <q-form ref="form" @submit="submitForm">
+        <q-form ref="form" @submit="updateForm">
           <div class="q-gutter-y-md column">
             <q-input
               label="TASK TITLE"
@@ -19,7 +19,6 @@
               label="TASK DESCRIPTION"
               v-model="editTask.description"
               stack-label
-              :rules="[(val) => !!val || 'field is not required']"
             />
 
             <!--Date time picker input-->
@@ -98,7 +97,13 @@
                 v-close-popup
                 class="bg-grey-5 text-black"
               />
-              <q-btn label="EDIT" class="bg-primary text-white" type="submit" />
+              <q-btn
+                label="SAVE"
+                class="bg-primary text-white"
+                type="submit"
+                no-caps
+                v-close-popup
+              />
             </div>
           </div>
         </q-form>
@@ -108,7 +113,16 @@
 </template>
 
 <script>
+const baseURL = "http://127.0.0.1:8000/api";
+
+const Api = axios.create({
+  baseURL: baseURL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 import { ref } from "vue";
+import axios from "axios";
 
 export default {
   props: ["editTaskValue"],
@@ -117,16 +131,32 @@ export default {
     return {
       editTask: {
         title: this.editTaskValue.title,
-        description: this.editTaskValue.title,
+        description: this.editTaskValue.description,
         duedate: this.editTaskValue.duedate,
         status: this.editTaskValue.status,
       },
     };
   },
   methods: {
-    submitForm() {
+    apiCall(page = 1) {
+      Api.get(`/todo?page=${page}`)
+        .then((response) => {
+          this.tasks = response.data.data;
+          this.pagination = response.data.pagination;
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
+    },
+    updateForm() {
       const task = this.editTask;
-      console.log(task);
+      Api.put(`/todo/${this.editTaskValue.id}`, task).then((response) => {
+        this.$emit("updateTask", this.editTaskValue == response.data);
+        this.apiCall();
+      });
     },
   },
 };

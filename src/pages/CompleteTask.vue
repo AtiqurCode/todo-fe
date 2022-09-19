@@ -1,109 +1,115 @@
 <template>
-  <div class="q-pa-md">
-    <div class="q-gutter-md">
-      <q-badge color="secondary" multi-line> Model: "{{ model }}" </q-badge>
+  <q-page class="q-pa-sm">
+    <q-card-section>
+      <div class="text-h6 text-center">Recent Completed Task</div>
+    </q-card-section>
 
-      <q-select
-        filled
-        v-model="model"
-        :options="options"
-        label="Standard"
-        emit-value
-        map-options
-      />
+    <q-list separator bordered>
+      <q-item
+        v-for="task in tasks"
+        :key="task.id"
+        @click="task.status = !task.status"
+        :class="task.status != 'DONE' ? 'bg-orange-1' : 'bg-green-1'"
+      >
+        <q-item-section side>
+          <q-checkbox
+            class="no-pointer-events"
+            :val="task.status"
+            v-model="statusChecked"
+          />
+        </q-item-section>
 
-      <q-btn color="primary" @click="showTextLoading"> Show it </q-btn>
+        <q-item-section>
+          <q-item-label :class="{ 'text-strikethrough': task.completed }">
+            {{ task.title }}
+          </q-item-label>
+          <q-item-label style="font-size: 10px">
+            {{ task.description }}
+          </q-item-label>
+          <q-item-label style="font-size: 10px">
+            {{ task.completedat }}
+          </q-item-label>
+        </q-item-section>
 
-      <q-card class="bg-grey-3 relative-position card-example">
-        <q-card-section class="q-pb-none">
-          <div class="text-h6">Lorem Ipsum</div>
-        </q-card-section>
-
-        <q-card-section>
-          <transition
-            appear
-            enter-active-class="animated fadeIn"
-            leave-active-class="animated fadeOut"
-          >
-            <div v-show="showSimulatedReturnData">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
-              vel magna eu risus laoreet tristique. Nulla ut fermentum elit, nec
-              consequat augue. Morbi et dolor nec metus tincidunt pellentesque.
-              Nullam non semper ante. Fusce pellentesque sagittis felis quis
-              porta. Aenean condimentum neque sed erat suscipit malesuada. Nulla
-              eget rhoncus enim. Duis dictum interdum eros.
+        <q-item-section side>
+          <div class="row">
+            <div class="column justify-center">
+              <!-- <q-btn
+                @click="promptToEdit(task)"
+                flat
+                round
+                dense
+                color="green"
+                icon="edit"
+              /> -->
             </div>
-          </transition>
-        </q-card-section>
+          </div>
+        </q-item-section>
 
-        <q-inner-loading
-          :showing="visible"
-          label="Please wait..."
-          label-class="text-teal"
-          label-style="font-size: 1.1em"
-        />
-      </q-card>
-    </div>
-
-    <div class="q-gutter-sm q-py-sm">
-      <q-radio v-model="shape" val="line" label="Line" />
-      <q-radio v-model="shape" val="rectangle" label="Rextangle" />
-      <q-radio v-model="shape" val="ellipse" label="Ellipse" />
-      <q-radio v-model="shape" val="polygon" label="Polygon" />
-    </div>
-
-    <div class="q-px-sm">Your selection is: {{ shape }}</div>
-  </div>
+        <!-- <q-dialog v-model="showEditTask">
+          <edit-task @close="showEditTask = false" />
+        </q-dialog> -->
+        <q-item-section side>
+          <!-- <q-btn
+            @click.stop="promptToDelete(task.id)"
+            flat
+            round
+            dense
+            color="red"
+            icon="delete"
+          /> -->
+        </q-item-section>
+      </q-item>
+    </q-list>
+  </q-page>
 </template>
 
 <script>
+const baseURL = "http://127.0.0.1:8000/api";
+
+const Api = axios.create({
+  baseURL: baseURL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+import axios from "axios";
 import { ref } from "vue";
 
 export default {
-  setup() {
-    const visible = ref(false);
-    const showSimulatedReturnData = ref(false);
-
+  data() {
     return {
-      visible,
-      showSimulatedReturnData,
-      model: ref(null),
-      shape: ref("line"),
-
-      showTextLoading() {
-        visible.value = true;
-        showSimulatedReturnData.value = false;
-        setTimeout(() => {
-          visible.value = false;
-          showSimulatedReturnData.value = true;
-        }, 2000);
-      },
-
-      options: [
-        {
-          label: "Google",
-          value: "goog",
-        },
-        {
-          label: "Facebook",
-          value: "fb",
-        },
-        {
-          label: "Twitter",
-          value: "twt",
-        },
-        {
-          label: "Apple",
-          value: "app",
-        },
-        {
-          label: "Oracle",
-          value: "ora",
-          disable: true,
-        },
-      ],
-      // console.log(this.$api_url);
+      tasks: null,
+      currentPage: null,
+      getPageNumber: null,
+      statusChecked: ["DONE"],
     };
+  },
+  mounted() {
+    this.getTasks();
+  },
+  methods: {
+    getTasks(page = 1) {
+      Api.get("/todo?page=" + page + "&limit=10&status=DONE")
+        .then((response) => {
+          console.log(response.data);
+          this.tasks = response.data.data;
+          this.currentPage = response.data.current_page;
+
+          const number = response.data.total / response.data.per_page;
+          this.getPageNumber = Number.isInteger(number) ? number : number + 1;
+
+          console.log(this.currentPage, this.getPageNumber);
+        })
+        .catch((error) => {
+          console.log(error);
+          this.errored = true;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
   },
 };
 </script>

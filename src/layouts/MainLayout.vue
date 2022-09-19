@@ -31,18 +31,26 @@
         <q-list padding>
           <q-item clickable v-ripple to="/" exact>
             <q-item-section avatar>
+              <q-icon name="dashboard" />
+            </q-item-section>
+
+            <q-item-section>Dashboard</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple to="/tasks" exact>
+            <q-item-section avatar>
               <q-icon name="inbox" />
             </q-item-section>
 
             <q-item-section>Todos List</q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple to="/pintodos" exact>
+          <q-item clickable v-ripple to="/important" exact>
             <q-item-section avatar>
               <q-icon name="star" />
             </q-item-section>
 
-            <q-item-section>Pin Todos </q-item-section>
+            <q-item-section>Important </q-item-section>
           </q-item>
 
           <q-item clickable v-ripple to="/complete" exact>
@@ -61,7 +69,7 @@
             <q-item-section>Settings </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple to="/logout">
             <q-item-section avatar>
               <q-icon name="power_settings_new" />
             </q-item-section>
@@ -78,9 +86,9 @@
       >
         <div class="absolute-bottom bg-transparent">
           <q-avatar size="56px" class="q-mb-sm">
-            <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+            <img :src="userInfo.profile_photo_url" />
           </q-avatar>
-          <div class="text-weight-bold">Md Atiqur Rahman</div>
+          <div class="text-weight-bold">{{ userInfo.name }}</div>
           <div>@atiqurTodo</div>
         </div>
       </q-img>
@@ -96,6 +104,11 @@ import { ref } from "vue";
 
 export default {
   name: "MyLayout",
+  data() {
+    return {
+      userInfo: "",
+    };
+  },
   drawerOpened: {
     get() {
       return this.drawerState;
@@ -116,6 +129,19 @@ export default {
       leftDrawerOpen,
       toggleLeftDrawer,
     };
+  },
+  mounted() {
+    let user = localStorage.getItem("auth_user_data");
+    if (!user) {
+      this.$router.push("/app/login");
+    }
+    this.authUserData();
+  },
+  methods: {
+    authUserData() {
+      const userPrfile = JSON.parse(localStorage.getItem("auth_user_data"));
+      this.userInfo = userPrfile.user_info;
+    },
   },
 };
 </script>

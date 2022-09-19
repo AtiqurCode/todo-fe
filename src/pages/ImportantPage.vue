@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page class="q-pa-md" style="background-color: #ffebee">
     <q-card-section>
       <div class="text-h6 text-center">Add new task</div>
     </q-card-section>
